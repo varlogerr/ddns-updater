@@ -10,6 +10,16 @@ DDNS_PROVIDER="ddns"
 print_help() {
   echo "Minimal update interval: 5 min"
   echo
+  echo "Available environment variables:"
+  while read -r l; do
+    [[ -n "${l}" ]] && echo "  ${l}"
+  done <<< "
+    DDNS_USER  - (required) account username
+    DDNS_PASS  - (required) account password
+    DDNS_HOSTS - (optional) space separated hosts
+    DDNS_IP    - (optional) specific IP
+  "
+  echo
   echo "Usage:"
   local offset=2; while read -r l; do
     [[ -n "${l}" ]] && printf -- "%-${offset}s%s\\n" '' "${l}"

@@ -11,6 +11,15 @@ DDNS_PROVIDER="duckdns"
 print_help() {
   echo "Minimal update interval: 5 min"
   echo
+  echo "Available environment variables:"
+  while read -r l; do
+    [[ -n "${l}" ]] && echo "  ${l}"
+  done <<< "
+    DDNS_TOKEN   - (required) access token
+    DDNS_DOMAINS - (required) space separated domain names
+    DDNS_IP      - (optional) specific IP
+  "
+  echo
   echo "Usage:"
   local offset=2; while read -r l; do
     [[ -n "${l}" ]] && printf -- "%-${offset}s%s\\n" '' "${l}"

@@ -11,6 +11,16 @@ IP_PROVIDER="https://ydns.io/api/v1/ip"
 print_help() {
   echo "Minimal update interval: 15 min"
   echo
+  echo "Available environment variables:"
+  while read -r l; do
+    [[ -n "${l}" ]] && echo "  ${l}"
+  done <<< "
+    DDNS_USER  - (required) account username
+    DDNS_PASS  - (required) account password
+    DDNS_HOSTS - (required) space separated hosts
+    DDNS_IP    - (optional) specific IP
+  "
+  echo
   echo "Usage:"
   local offset=2; while read -r l; do
     [[ -n "${l}" ]] && printf -- "%-${offset}s%s\\n" '' "${l}"
