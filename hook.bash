@@ -1,17 +1,26 @@
-export DDNS_UPDATE_BINDIR="${DDNS_UPDATE_BINDIR:-$(dirname "$(realpath "${BASH_SOURCE[0]}")")/bin}"
-export DDNS_UPDATE_PREPEND_PATH="${DDNS_UPDATE_PREPEND_PATH:-0}"
+__tmp_add_path() {
+  export DDNS_UPDATE_PREPEND_PATH="${DDNS_UPDATE_PREPEND_PATH:-0}"
+  export DDNS_UPDATE_BINDIR="${DDNS_UPDATE_BINDIR:-$(
+    script_path="$(realpath "${1}")"
+    script_dir="$(dirname "${script_path}")"
+    echo "${script_dir}/bin"
+  )}"
 
-if \
-  !  tr ':' '\n' <<< "${PATH}" | sort | uniq \
-  | grep -Fxq "${DDNS_UPDATE_BINDIR}" \
-; then
-  # ${DDNS_UPDATE_BINDIR} is not in the ${PATH}
+  local bindir="${DDNS_UPDATE_BINDIR}"
+  local prepend="${DDNS_UPDATE_PREPEND_PATH}"
 
-  if [[ ${DDNS_UPDATE_PREPEND_PATH} == 1 ]]; then
-    # prepend $PATH with ddns-update bin path
-    export PATH="${DDNS_UPDATE_BINDIR}${PATH:+:${PATH}}"
-  else
-    # append ddns-update bin path to $PATH
-    export PATH="${PATH:+${PATH}:}${DDNS_UPDATE_BINDIR}"
+  if \
+    !  tr ':' '\n' <<< "${PATH}" | sort | uniq \
+    | grep -Fxq "${bindir}" \
+  ; then
+    # $bindir is not in the $PATH
+    if [[ ${prepend} == 1 ]]; then
+      # prepend $PATH with $bindir
+      export PATH="${bindir}${PATH:+:${PATH}}"
+    else
+      # append ddns-update bin path to $PATH
+      export PATH="${PATH:+${PATH}:}${bindir}"
+    fi
   fi
-fi
+}
+__tmp_add_path "${1:-${BASH_SOURCE[0]}}"
