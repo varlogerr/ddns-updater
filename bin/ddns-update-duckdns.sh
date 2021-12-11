@@ -15,9 +15,9 @@ print_help() {
   while read -r l; do
     [[ -n "${l}" ]] && echo "  ${l}"
   done <<< "
-    DDNS_TOKEN   - (required) access token
-    DDNS_DOMAINS - (required) space separated domain names
-    DDNS_IP      - (optional) specific IP
+    DDNS_TOKEN - (required) access token
+    DDNS_HOSTS - (required) space separated hosts
+    DDNS_IP    - (optional) specific IP
   "
   echo
   echo "Usage:"
@@ -27,12 +27,12 @@ print_help() {
   done <<< "
     # update space separated domains
     DDNS_TOKEN='<token>' \\
-    DDNS_DOMAINS='<space-sep-domains>' \\
+    DDNS_HOSTS='<space-sep-domains>' \\
     ${THE_SCRIPT}
     # update space separated domains
     # to specific IP
     DDNS_TOKEN='<token>' \\
-    DDNS_DOMAINS='<space-sep-hosts>' \\
+    DDNS_HOSTS='<space-sep-hosts>' \\
     DDNS_IP='<some-ip>' \\
     ${THE_SCRIPT}
   "
@@ -43,7 +43,7 @@ print_help() {
     [[ "${l: -1}" == '\' ]] && offset=4 || offset=2
   done <<< "
     DDNS_TOKEN='123' \\
-    DDNS_DOMAINS='foo bar' \\
+    DDNS_HOSTS='foo bar' \\
     DDNS_IP='1.2.3.4' \\
     ${THE_SCRIPT}
   "
@@ -62,12 +62,12 @@ fi
 
 print_log_nl "IP: ${DDNS_IP}"
 
-csv_domains="$(sed -E 's/\s+/,/g' <<< ${DDNS_DOMAINS})"
+csv_domains="$(sed -E 's/\s+/,/g' <<< ${DDNS_HOSTS})"
 API_URL+="&domains=${csv_domains}&token=${DDNS_TOKEN}"
 
 result="$(
   curl -ks -K - <<< "url=${API_URL}"
 )"
-for d in ${DDNS_DOMAINS}; do
+for d in ${DDNS_HOSTS}; do
   print_log_nl "(${d}) ${result}"
 done
